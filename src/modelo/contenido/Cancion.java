@@ -57,8 +57,8 @@ public class Cancion extends Contenido implements Reproducible, Descargable {
         return letra;
     }
 
-    public String setLetra(String letra){
-        return letra;
+    public void setLetra(String letra){
+        this.letra = letra;
     }
 
     public Artista getArtista() {
@@ -66,38 +66,39 @@ public class Cancion extends Contenido implements Reproducible, Descargable {
     }
 
     public void setArtista(Artista artista) {
+        this.artista = artista;
     }
 
     public Album getAlbum() {
         return album;
     }
 
-    public Album setAlbum(Album album) {
-        return album;
+    public void setAlbum(Album album) {
+        this.album = album;
     }
 
     public GeneroMusical getGenero() {
         return genero;
     }
 
-    public GeneroMusical setGenero(GeneroMusical genero) {
-        return genero;
+    public void setGenero(GeneroMusical genero) {
+        this.genero = genero;
     }
 
     public String getAudioURL() {
         return audioURL;
     }
 
-    public String setAudioURL(String audioURL) {
-        return audioURL;
+    public void setAudioURL(String audioURL) {
+        this.audioURL = audioURL;
     }
 
     public boolean isExplicit() {
         return explicit;
     }
 
-    public boolean setExplicit(boolean explicit) {
-        return explicit;
+    public void setExplicit(boolean explicit) {
+        this.explicit = explicit;
     }
 
 

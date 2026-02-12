@@ -70,38 +70,56 @@ public class UsuarioGratuito extends Usuario {
     }
 
     public void reproducir (Contenido contenido) throws ContenidoNoDisponibleException, LimiteDiarioAlcanzadoException, AnuncioRequeridoException {
+        // Verificar disponibilidad
+        if (contenido == null || !contenido.isDisponible()){
+            throw new ContenidoNoDisponibleException();
+        }
 
+        // Verificar límite diario
+        if (reproduccionesHoy >= LIMITE_DIARIO) {
+            throw new LimiteDiarioAlcanzadoException();
+        }
+
+        // Verificar si debe ver anuncio ANTES de reproducir
+        if (debeVerAnuncio()) {
+            throw new AnuncioRequeridoException("Anuncio requerido");
+        }
+
+        // Reproducir
+        contenido.aumentarReproduciones();
+        agregarAlHistorial(contenido);
+        reproduccionesHoy++;
+        cancionesSinAnuncio++;
     }
 
     public void verAnuncio (){
-
+        anunciosEscuchados++;
+        cancionesSinAnuncio = 0;
     }
 
     public void verAnuncio (Anuncio anuncio){
-
+        anunciosEscuchados++;
+        cancionesSinAnuncio = 0;
     }
 
     public boolean puedeReproducir(){
-
-        return false;
+        return reproduccionesHoy < LIMITE_DIARIO;
     }
 
     public boolean debeVerAnuncio (){
-
-        return false;
+        return cancionesSinAnuncio >= CANCIONES_ENTRE_ANUNCIOS;
     }
 
     public void reiniciarContadorDiario(){
-
+        reproduccionesHoy = 0;
+        cancionesSinAnuncio = 0;
     }
 
     public int getReproduccionesRestantes (){
-
-        return 0;
+        return LIMITE_DIARIO - reproduccionesHoy;
     }
 
     public int getCancionesHastaAnuncio (){
-
-        return 0;
+        return CANCIONES_ENTRE_ANUNCIOS - cancionesSinAnuncio;
     }
 }

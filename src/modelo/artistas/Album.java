@@ -127,6 +127,7 @@ public class Album extends Cancion {
             throw new AlbumCompletoException("Álbum lleno");
         }
         Cancion cancion = new Cancion(titulo, duracion, artista, genero);
+        cancion.setAlbum(this);
         canciones.add(cancion);
         return cancion;
     }
@@ -137,6 +138,7 @@ public class Album extends Cancion {
             throw new AlbumCompletoException("Álbum lleno");
         }
         Cancion cancion = new Cancion(titulo, duracionSegundos, artista, genero, letra, explicit);
+        cancion.setAlbum(this);
         canciones.add(cancion);
         return cancion;
     }
@@ -151,17 +153,27 @@ public class Album extends Cancion {
         return canciones != null ? canciones.size() : 0;
     }
 
+    public int getMaxCanciones(){
+        return MAX_CANCIONES;
+    }
+
     public void ordenarPorPopularidad(){
+        canciones.sort((c1, c2) -> Integer.compare(c2.getReproducciones(), c1.getReproducciones()));
     }
 
     public Cancion getCancion (int posicion) throws CancionNoEncontradaException{
-
-        return null;
+        if (posicion < 0 || posicion >= canciones.size()) {
+            throw new CancionNoEncontradaException("Posición de canción no válida");
+        }
+        return canciones.get(posicion);
     }
 
-    public int getTotalReproduciones (){
-
-        return 0;
+    public int getTotalReproducciones (){
+        int total = 0;
+        for (Cancion c : canciones) {
+            total += c.getReproducciones();
+        }
+        return total;
     }
 
     @Override

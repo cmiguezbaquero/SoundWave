@@ -223,10 +223,19 @@ public class Plataforma {
         if (!artista.isVerificado()) {
             throw new ArtistaNoVerificadoException("Artista no verificado");
         }
+
+        // Verificar si el álbum ya existe
+        for (Album a : artista.getAlbumes()) {
+            if (a.getTitulo().equals(titulo)) {
+                throw new AlbumYaExisteException("El álbum ya existe");
+            }
+        }
         Album album = new Album(titulo, artista, fecha);
         albumes.add(album);
+        artista.getAlbumes().add(album);
         return album;
     }
+
 
     public ArrayList<Album> getAlbumes() {
         return new ArrayList<>(albumes);
@@ -292,8 +301,9 @@ public class Plataforma {
     }
 
     public Playlist crearPlaylistPublica (String nombre, Usuario creador){
-
-        return null;
+        Playlist playlist = new Playlist(nombre, creador, true, "");
+        playlistsPublicas.add(playlist);
+        return playlist;
     }
 
     public ArrayList<Playlist> getPlaylistsPublicas (){
@@ -301,23 +311,62 @@ public class Plataforma {
     }
 
     public ArrayList<Contenido> buscarContenido (String termino) throws ContenidoNoEncontradoException {
-
-        return null;
+        ArrayList<Contenido> resultados = new ArrayList<>();
+        for (Contenido c : catalogo) {
+            if (c.getTitulo().toLowerCase().contains(termino.toLowerCase())) {
+                resultados.add(c);
+            }
+        }
+        if (resultados.isEmpty()) {
+            throw new ContenidoNoEncontradoException("No se encontraron contenidos para el término: " + termino);
+        }
+        return resultados;
     }
 
     public ArrayList<Cancion> buscarPorGenero (GeneroMusical genero) throws ContenidoNoEncontradoException{
-
-        return null;
+        ArrayList<Cancion> resultados = new ArrayList<>();
+        for (Contenido c : catalogo) {
+            if (c instanceof Cancion) {
+                Cancion cancion = (Cancion) c;
+                if (cancion.getGenero() == genero) {
+                    resultados.add(cancion);
+                }
+            }
+        }
+        if (resultados.isEmpty()) {
+            throw new ContenidoNoEncontradoException("No se encontraron canciones del género " + genero);
+        }
+        return resultados;
     }
 
     public ArrayList<Podcast> buscarPorCategria (CategoriaPodcast categoria) throws ContenidoNoEncontradoException{
-
-        return null;
+        ArrayList<Podcast> resultados = new ArrayList<>();
+        for (Contenido c : catalogo) {
+            if (c instanceof Podcast) {
+                Podcast podcast = (Podcast) c;
+                if (podcast.getCategoria() == categoria) {
+                    resultados.add(podcast);
+                }
+            }
+        }
+        if (resultados.isEmpty()) {
+            throw new ContenidoNoEncontradoException("No se encontraron podcasts de la categoría " + categoria);
+        }
+        return resultados;
     }
 
     public ArrayList<Contenido> obtenerTopContenidos (int cantidad){
+        ArrayList<Contenido> top = new ArrayList<>(catalogo);
+        top.sort((c1, c2) -> Integer.compare(c2.getReproducciones(), c1.getReproducciones()));
+        return new ArrayList<>(top.subList(0, Math.min(cantidad, top.size())));
+    }
 
-        return null;
+    public ArrayList<Contenido> obtenerRecomendaciones (Usuario usuario){
+        try {
+            return recomendador.recomendar(usuario);
+        } catch (excepciones.recomendacion.RecomendacionException e) {
+            return new ArrayList<>();
+        }
     }
 
     public Anuncio obtenerAnuncioAleatorio (){
@@ -341,6 +390,15 @@ public class Plataforma {
     }
 
     public ArrayList<Podcast> buscarPorCategoria(CategoriaPodcast categoriaPodcast) {
-        return null;
+        ArrayList<Podcast> resultados = new ArrayList<>();
+        for (Contenido c : catalogo) {
+            if (c instanceof Podcast) {
+                Podcast podcast = (Podcast) c;
+                if (podcast.getCategoria() == categoriaPodcast) {
+                    resultados.add(podcast);
+                }
+            }
+        }
+        return resultados;
     }
 }

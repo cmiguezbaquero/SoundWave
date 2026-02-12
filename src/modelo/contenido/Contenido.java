@@ -39,7 +39,14 @@ public abstract class Contenido {
     }
 
     public Contenido() {
-
+        this.id = UUID.randomUUID().toString();
+        this.titulo = "";
+        this.reproducciones = 0;
+        this.likes = 0;
+        this.duracionSegundos = 0;
+        this.tags = new ArrayList<>();
+        this.disponible = true;
+        this.fechaPublicacion = new Date();
     }
 
     public String getId() {
@@ -119,16 +126,17 @@ public abstract class Contenido {
     }
 
     public void marcarNoDisponible (){
-
+        this.disponible = false;
     }
 
     public void marcarDisponible (){
-
+        this.disponible = true;
     }
 
     public String getDuracionFormateada (){
-
-        return "";
+        int minutos = duracionSegundos / 60;
+        int segundos = duracionSegundos % 60;
+        return String.format("%d:%02d", minutos, segundos);
     }
 
 
@@ -138,7 +146,7 @@ public abstract class Contenido {
 
     @Override
     public boolean equals (Object obj) {
-        if (this == obj) return true;
+          if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Contenido contenido = (Contenido) obj;
         return id.equals(contenido.id);
@@ -150,10 +158,11 @@ public abstract class Contenido {
     }
 
     public int getReproducciones() {
-        return 0;
+        return reproducciones;
     }
 
-    public void setReproducciones(int i) {
+    public void setReproducciones(int reproducciones) {
+        this.reproducciones = reproducciones;
     }
 
     public int getMaxCanciones() {
@@ -161,6 +170,6 @@ public abstract class Contenido {
     }
 
     public int getTotalReproducciones() {
-        return 0;
+        return reproducciones;
     }
 }

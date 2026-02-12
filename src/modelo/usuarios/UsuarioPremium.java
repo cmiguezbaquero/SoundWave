@@ -82,6 +82,9 @@ public class UsuarioPremium extends Usuario {
         if (contenido == null || !contenido.isDisponible()){
             throw new ContenidoNoDisponibleException();
         }
+
+        contenido.aumentarReproduciones();
+        agregarAlHistorial(contenido);
     }
 
     public void descargar (Contenido contenido)

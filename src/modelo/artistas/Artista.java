@@ -25,6 +25,10 @@ public class Artista {
         this.nombreArtistico = nombreArtistico;
         this.nombreReal = nombreReal;
         this.paisOrigen = paisOrigen;
+        this.discografia = new ArrayList<>();
+        this.albumes = new ArrayList<>();
+        this.oyentesMensuales = 0;
+        this.verificado = false;
     }
 
     public Artista (String nombreArtistico, String nombreReal, String paisOrigen, boolean verificado, String biografia){
@@ -33,6 +37,9 @@ public class Artista {
         this.paisOrigen = paisOrigen;
         this.verificado = verificado;
         this.biografia = biografia;
+        this.discografia = new ArrayList<>();
+        this.albumes = new ArrayList<>();
+        this.oyentesMensuales = 0;
     }
 
     public String getId() {
@@ -96,36 +103,59 @@ public class Artista {
     }
 
     public void publicarCancion (Cancion cancion){
-
+        if (!discografia.contains(cancion)) {
+            discografia.add(cancion);
+        }
     }
 
     public void crearAlbum (String titulo, Date fecha) throws ArtistaNoVerificadoException, AlbumYaExisteException {
+        if (!verificado) {
+            throw new ArtistaNoVerificadoException("Artista no verificado");
+        }
+        for (Album a : albumes) {
+            if (a.getTitulo().equals(titulo)) {
+                throw new AlbumYaExisteException("El álbum ya existe");
+            }
+        }
+        Album album = new Album(titulo, this, fecha);
+        albumes.add(album);
     }
 
     public ArrayList<Cancion> obtenerTopCanciones (int cantidad){
-
-        return null;
+        ArrayList<Cancion> top = new ArrayList<>(discografia);
+        top.sort((c1, c2) -> Integer.compare(c2.getReproducciones(), c1.getReproducciones()));
+        return new ArrayList<>(top.subList(0, Math.min(cantidad, top.size())));
     }
 
     public double calcularPromedioReproducciones (){
-
-        return 0;
+        if (discografia.isEmpty()) {
+            return 0.0;
+        }
+        int total = 0;
+        for (Cancion c : discografia) {
+            total += c.getReproducciones();
+        }
+        return (double) total / discografia.size();
     }
 
     public boolean esVerificado (){
-
-        return false;
+        return verificado;
     }
 
     public int getTotalReproducciones (){
-
-        return 0;
+        int total = 0;
+        for (Cancion c : discografia) {
+            total += c.getReproducciones();
+        }
+        return total;
     }
 
     public void verificar (){
+        this.verificado = true;
     }
 
     public void incrementarOyentes (){
+        this.oyentesMensuales++;
     }
 
     @Override

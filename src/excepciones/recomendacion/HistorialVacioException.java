@@ -1,6 +1,6 @@
 package excepciones.recomendacion;
 
-public class HistorialVacioException extends Exception {
+public class HistorialVacioException extends RecomendacionException {
 
     public HistorialVacioException (){
 

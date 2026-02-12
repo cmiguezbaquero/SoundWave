@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public abstract class Usuario {
 
-    private static final int LIMITE_HISTORIAL = 0;
+    private static int LIMITE_HISTORIAL = 100;
     protected String id;
     protected String nombre;
     protected String email;
@@ -92,6 +92,7 @@ public abstract class Usuario {
     }
 
     public ArrayList<Contenido> getHistorial() {
+        LIMITE_HISTORIAL = 0;
         return new ArrayList<>(historial);
     }
 
@@ -122,12 +123,15 @@ public abstract class Usuario {
     public void seguirPlaylist(Playlist playlist) {
         if (!playlistsSeguidas.contains(playlist)) {
             playlistsSeguidas.add(playlist);
+            playlist.incrementarSeguirdores();
         }
     }
 
     public void dejarDeSeguirPlaylist (Playlist playlist){
-            playlistsSeguidas.remove (playlist);
-
+        if (playlistsSeguidas.contains(playlist)) {
+            playlistsSeguidas.remove(playlist);
+            playlist.decrementarSeguidores();
+        }
     }
 
     public void darLike(Contenido contenido) {

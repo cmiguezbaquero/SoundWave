@@ -29,7 +29,7 @@ public class EstadisticasCreador {
         duracionTotalSegundos = 0;
         episodioMasPopular = null;
 
-        for (Podcast p : creador.getPodcasts()) {
+        for (Podcast p : creador.getEpisodios()) {
             totalEpisodios++;
             totalReproducciones += p.getReproducciones();
             duracionTotalSegundos += p.getDuracionSegundos();
@@ -60,26 +60,14 @@ public class EstadisticasCreador {
     }
 
     public String generarReporte (){
-
-        return """
-        Estadísticas del creador: %s
-        Total episodios: %d
-        Total reproducciones: %d
-        Promedio reproducciones: %.2f
-        Suscriptores: %d
-        Likes totales: %d
-        Duración total: %s
-        Episodio más popular: %s
-        """.formatted(
-        creador.getNombre(),
-        totalEpisodios,
-        totalReproducciones,
-        promedioReproducciones,
-        totalSuscriptores,
-        totalLikes,
-        formatearDuracion(duracionTotalSegundos),
-        episodioMasPopular != null ? episodioMasPopular.getTitulo() : "N/A"
-        );
+        return "Estadísticas del creador: " + creador.getNombreCanal().toUpperCase() + "\n" +
+                "Total episodios: " + totalEpisodios + "\n" +
+                "Total reproducciones: " + totalReproducciones + "\n" +
+                "Promedio reproducciones: " + String.format("%.2f", promedioReproducciones) + "\n" +
+                "Suscriptores: " + totalSuscriptores + "\n" +
+                "Likes totales: " + totalLikes + "\n" +
+                "Duración total: " + formatearDuracion(duracionTotalSegundos) + "\n" +
+                "Episodio más popular: " + (episodioMasPopular != null ? episodioMasPopular.getTitulo() : "N/A");
     }
 
     public double calcularEngagement (){

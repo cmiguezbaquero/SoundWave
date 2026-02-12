@@ -26,6 +26,9 @@ public class Creador {
         this.nombreCanal = nombreCanal;
         this.nombre = nombre;
         this.episodios = new ArrayList<>();
+        this.redesSociales = new HashMap<>();
+        this.categoriasPrincipales = new ArrayList<>();
+        this.suscriptores = 0;
     }
 
     public Creador (String nombreCanal, String nombre, String descripcion){
@@ -33,6 +36,9 @@ public class Creador {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.episodios = new ArrayList<>();
+        this.redesSociales = new HashMap<>();
+        this.categoriasPrincipales = new ArrayList<>();
+        this.suscriptores = 0;
     }
 
     public String getId() {
@@ -95,39 +101,75 @@ public class Creador {
     }
 
     public EstadisticasCreador obtenerEstadisticas (){
-
-        return null;
+        return new EstadisticasCreador(this);
     }
 
     public void agregarRedSocial (String red, String usuario){
-
+        if (redesSociales == null) {
+            redesSociales = new HashMap<>();
+        }
+        redesSociales.put(red.toLowerCase(), usuario);
     }
 
     public double calcularPromedioReproducciones (){
-
-        return 0;
+        if (episodios.isEmpty()) {
+            return 0.0;
+        }
+        int total = getTotalReproducciones();
+        return (double) total / episodios.size();
     }
 
     public void eliminarEpisodio (String idEpisodio) throws EpisodioNoEncontradoException {
-
+        for (int i = 0; i < episodios.size(); i++) {
+            if (episodios.get(i).getId().equals(idEpisodio)) {
+                episodios.remove(i);
+                return;
+            }
+        }
+        throw new EpisodioNoEncontradoException("Episodio no encontrado");
     }
 
     public int getTotalReproducciones (){
-
-        return 0;
+        int total = 0;
+        for (Podcast p : episodios) {
+            total += p.getReproducciones();
+        }
+        return total;
     }
 
     public void incrementarSuscriptores (){
+        this.suscriptores++;
     }
 
     public ArrayList<Podcast> obtenerTopEpisodios (int cantidad){
-
-        return null;
+        ArrayList<Podcast> top = new ArrayList<>(episodios);
+        top.sort((p1, p2) -> Integer.compare(p2.getReproducciones(), p1.getReproducciones()));
+        return new ArrayList<>(top.subList(0, Math.min(cantidad, top.size())));
     }
 
     public int getUltimaTemporada (){
+        if (episodios.isEmpty()) {
+            return 0;
+        }
+        int maxTemporada = 0;
+        for (Podcast p : episodios) {
+            if (p.getTemporada() > maxTemporada) {
+                maxTemporada = p.getTemporada();
+            }
+        }
+        return maxTemporada;
+    }
 
-        return 0;
+    public Podcast[] getPodcasts() {
+        return episodios.toArray(new Podcast[0]);
+    }
+
+    public int getTotalLikes() {
+        int total = 0;
+        for (Podcast p : episodios) {
+            total += p.getLikes();
+        }
+        return total;
     }
 
     @Override
@@ -143,14 +185,6 @@ public class Creador {
     @Override
     public int hashCode() {
         return super.hashCode();
-    }
-
-    public Podcast[] getPodcasts() {
-        return new Podcast[0];
-    }
-
-    public int getTotalLikes() {
-        return 0;
     }
 
 }

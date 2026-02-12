@@ -29,6 +29,11 @@ public class Playlist {
         this.creador = creador;
         this.esPublica = false;
         this.descripcion = "";
+        this.contenidos = new ArrayList<>();
+        this.fechaCreacion = new Date();
+        this.seguidores = 0;
+        this.maxContenidos = MAX_CONTENIDOS_DEFAULT;
+        this.id = UUID.randomUUID().toString();
     }
 
     public Playlist (String nombre, Usuario creador, boolean esPublica, String descripcion){
@@ -36,7 +41,7 @@ public class Playlist {
         this.creador = creador;
         this.esPublica = esPublica;
         this.descripcion = descripcion;
-
+        this.id = UUID.randomUUID().toString();
         this.contenidos = new ArrayList<>();
         this.fechaCreacion = new Date();
         this.seguidores = 0;
@@ -64,6 +69,7 @@ public class Playlist {
     }
 
     public boolean isEsPublica() {
+
         return esPublica;
     }
 
@@ -128,6 +134,35 @@ public class Playlist {
     public void ordenarPor (CriterioOrden criterio) throws PlaylistVaciaException {
         if (contenidos.isEmpty()){
             throw new PlaylistVaciaException("Playlist vacía");
+        }
+
+        switch(criterio) {
+            case POPULARIDAD:
+                contenidos.sort((c1, c2) -> Integer.compare(c2.getReproducciones(), c1.getReproducciones()));
+                break;
+            case DURACION:
+                contenidos.sort((c1, c2) -> Integer.compare(c1.getDuracionSegundos(), c2.getDuracionSegundos()));
+                break;
+            case ALFABETICO:
+                contenidos.sort((c1, c2) -> c1.getTitulo().compareTo(c2.getTitulo()));
+                break;
+            case ALEATORIO:
+                Collections.shuffle(contenidos);
+                break;
+            case ARTISTA:
+                // Ordenar por artista (si el contenido es una canción)
+                contenidos.sort((c1, c2) -> {
+                    String artista1 = (c1 instanceof modelo.contenido.Cancion) ?
+                        ((modelo.contenido.Cancion)c1).getArtista().getNombreArtistico() : "";
+                    String artista2 = (c2 instanceof modelo.contenido.Cancion) ?
+                        ((modelo.contenido.Cancion)c2).getArtista().getNombreArtistico() : "";
+                    return artista1.compareTo(artista2);
+                });
+                break;
+            case FECHA_AGREGADO:
+            default:
+                // Por defecto no cambiar el orden (fue agregado en orden)
+                break;
         }
     }
 
